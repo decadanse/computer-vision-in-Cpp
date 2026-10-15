@@ -9,10 +9,13 @@
 
 #include "LabSelect.h"
 
-#if defined USE_CV_GAUSS_PIPELINE
+#if defined USE_CV_PIPELINE
 #include "./lab1_gaussian_filter/CVLab.h"
 #include "./lab1_gaussian_filter/CVLabView.h"
 #elif defined USE_CV_TRACKING_PIPELINE
+#include "./lab2_object_tracking/TrackingLab.h"
+#include "./lab2_object_tracking/TrackingLabView.h"
+#elif defined USE_MLP_PIPELINE
 // #include "...": состояние и воркер MLP
 #elif defined USE_CNN_PIPELINE
 // #include "...": состояние и воркер CNN
@@ -25,10 +28,14 @@
 
 @implementation Renderer {
     // Состояние активной лабораторной (пишет фоновый поток, читает поток рендера)
-#if defined USE_CV_GAUSS_PIPELINE
+#if defined USE_CV_PIPELINE
     CVLabState _cv;
 #elif defined USE_CV_TRACKING_PIPELINE
+    TrackingLabState _trk;
+#elif defined USE_MLP_PIPELINE
+    // AppState _state;
 #elif defined USE_CNN_PIPELINE
+    // AppState _state;
 #endif
     std::thread _workerThread;
 }
@@ -60,9 +67,14 @@
         ImGui_ImplOSX_Init(view);
 
         // окно уже показано — фоновая работа стартует сразу, UI ничего не блокирует
-#if defined USE_CV_GAUSS_PIPELINE
+#if defined USE_CV_PIPELINE
         _workerThread = std::thread(RunCVLab, std::ref(_cv));
 #elif defined USE_CV_TRACKING_PIPELINE
+        _workerThread = std::thread(RunTrackingLab, std::ref(_trk));
+#elif defined USE_MLP_PIPELINE
+        // _workerThread = std::thread(RunTrainingPipeline_MLP, std::ref(_state));
+#elif defined USE_CNN_PIPELINE
+        // _workerThread = std::thread(RunTrainingPipeline_CNN, std::ref(_state));
 #endif
     }
     return self;
@@ -71,8 +83,10 @@
 - (void)dealloc
 {
     // на выходе из приложения просим поток остановиться и дожидаемся его
-#if defined USE_CV_GAUSS_PIPELINE
+#if defined USE_CV_PIPELINE
     _cv.stop.store(true);
+#elif defined USE_CV_TRACKING_PIPELINE
+    _trk.stop.store(true);
 #endif
     if (_workerThread.joinable())
         _workerThread.join();
@@ -102,15 +116,15 @@
     ImGui_ImplOSX_NewFrame(view);
     ImGui::NewFrame();
 
-    ImGui::Begin("TEST");
-    ImGui::Text("Renderer is running!");
-    ImGui::End();
-    
     // --- UI активной лабораторной. Каждая ветка сама снимает копию данных под своим мьютексом ---
-#if defined USE_CV_GAUSS_PIPELINE
+#if defined USE_CV_PIPELINE
     DrawCVLab(_cv, _device);
 #elif defined USE_CV_TRACKING_PIPELINE
+    DrawTrackingLab(_trk, _device);
+#elif defined USE_MLP_PIPELINE
     // сюда: снимок состояния под мьютексом + ImGui/ImPlot для MLP
+#elif defined USE_CNN_PIPELINE
+    // сюда: снимок состояния под мьютексом + ImGui/ImPlot для CNN
 #else
     ImGui::Begin("Lab");
     ImGui::Text("Лабораторная не выбрана - раскомментируйте define в LabSelect.h");
