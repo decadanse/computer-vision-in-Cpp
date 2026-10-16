@@ -295,15 +295,9 @@ A_i = [ −x  −y  −1   0   0   0   x'x  x'y  x' ]
 
 1. Rublee E., Rabaud V., Konolige K., Bradski G. *ORB: An efficient alternative to SIFT or SURF* // ICCV, 2011.
 2. Rosten E., Drummond T. *Machine learning for high-speed corner detection* // ECCV, 2006 (FAST).
-3. Calonder M., Lepetit V., Strecha C., Fua P. *BRIEF: Binary Robust Independent Elementary Features* // ECCV, 2010.
-4. Lowe D. G. *Distinctive image features from scale-invariant keypoints* // IJCV, 60(2), 2004 (тест отношения расстояний, SIFT).
-5. Fischler M. A., Bolles R. C. *Random sample consensus* // Commun. ACM, 24(6), 1981.
-6. Hartley R., Zisserman A. *Multiple View Geometry in Computer Vision*, 2nd ed., Cambridge Univ. Press, 2004 (гомография, DLT).
-7. Lucas B. D., Kanade T. *An iterative image registration technique with an application to stereo vision* // IJCAI, 1981.
-8. Bouguet J.-Y. *Pyramidal implementation of the Lucas Kanade feature tracker*, Intel Corp., 2000.
-9. Shi J., Tomasi C. *Good features to track* // CVPR, 1994.
-10. Kalal Z., Mikolajczyk K., Matas J. *Forward-backward error: automatic detection of tracking failures* // ICPR, 2010.
-11. Harris C., Stephens M. *A combined corner and edge detector* // Alvey Vision Conf., 1988.
-12. Pech-Pacheco J. L. et al. *Diatom autofocusing in brightfield microscopy: a comparative study* // ICPR, 2000 (дисперсия лапласиана как мера резкости).
-13. Документация OpenCV: `ORB`, `BFMatcher`, `findHomography`, `calcOpticalFlowPyrLK`, `goodFeaturesToTrack`. https://docs.opencv.org
-14. Исходный код проекта: `lab2_tracking/` (`Tracker.cpp`, `TrackingLab.cpp`), подробное описание в `ALGORITHM.md`.
+3. Lowe D. G. *Distinctive image features from scale-invariant keypoints* // IJCV, 60(2), 2004 (тест отношения расстояний, SIFT).
+4. Hartley R., Zisserman A. *Multiple View Geometry in Computer Vision*, 2nd ed., Cambridge Univ. Press, 2004 (гомография, DLT).
+5. Bouguet J.-Y. *Pyramidal implementation of the Lucas Kanade feature tracker*, Intel Corp., 2000.
+6. Kalal Z., Mikolajczyk K., Matas J. *Forward-backward error: automatic detection of tracking failures* // ICPR, 2010.
+7. Документация OpenCV: `ORB`, `BFMatcher`, `findHomography`, `calcOpticalFlowPyrLK`, `goodFeaturesToTrack`. https://docs.opencv.org
+8. Исходный код проекта: `lab2_tracking/` (`Tracker.cpp`, `TrackingLab.cpp`), подробное описание в `ALGORITHM.md`.
