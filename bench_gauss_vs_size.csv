@@ -1,0 +1,21 @@
+method,x,ms
+native 2D,320,8.29067
+native 2D,640,32.9266
+native 2D,960,73.2376
+native 2D,1280,133.404
+native 2D,1920,304.161
+native separable,320,0.639
+native separable,640,2.53379
+native separable,960,5.86637
+native separable,1280,10.5867
+native separable,1920,23.5176
+native separable SIMD,320,0.149583
+native separable SIMD,640,0.528625
+native separable SIMD,960,1.17142
+native separable SIMD,1280,2.12092
+native separable SIMD,1920,4.94842
+OpenCV,320,0.044
+OpenCV,640,0.139042
+OpenCV,960,0.17925
+OpenCV,1280,0.265458
+OpenCV,1920,0.347625

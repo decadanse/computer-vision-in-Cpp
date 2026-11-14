@@ -66,3 +66,8 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+
+.venv/
+SUPIR_all_stuff/
+SUPIR_mask/

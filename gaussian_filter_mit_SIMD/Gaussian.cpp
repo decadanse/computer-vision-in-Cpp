@@ -15,12 +15,13 @@ double auto_sigma(int ksize)
     return 0.3 * ((ksize - 1) * 0.5 - 1.0) + 0.8;
 }
 
+//Ядро — это набор весов, с помощью которых вычисляется новое значение пикселя
 std::vector<float> gaussian_kernel_1d(int ksize, double sigma)
 {
     assert(ksize % 2 == 1 && ksize >= 1);
     if (sigma <= 0.0) sigma = auto_sigma(ksize);
 
-    const int r = ksize / 2;
+    const int r = ksize / 2; //  ksize = 5 получаем r = 2, поэтому смещения относительно центра равны:
     const double inv = -1.0 / (2.0 * sigma * sigma);
 
     std::vector<double> g(ksize);
@@ -28,7 +29,7 @@ std::vector<float> gaussian_kernel_1d(int ksize, double sigma)
     for (int i = 0; i < ksize; ++i)
     {
         const double d = i - r;
-        g[i] = std::exp(d * d * inv); // g(i) = exp(-d^2 / (2 sigma^2))
+        g[i] = std::exp(d * d * inv); // g(i) = exp(-d^2 / (2 sigma^2)) // Это сокращённая формула Гаусса в одном измерении
         sum += g[i];
     }
     std::vector<float> k(ksize);
@@ -51,6 +52,7 @@ static inline uint8_t to_u8(float v)
 // ---------------------------------------------------------------------------------------------
 static void hpass_scalar(const uint8_t* p, float* out, int w, const float* kx, int k, int x0)
 {
+    // Он берёт пиксели из одной строки и умножает их на веса горизонтального ядра.
     for (int x = x0; x < w; ++x)
     {
         float a = 0.f;
@@ -63,6 +65,7 @@ static void hpass_scalar(const uint8_t* p, float* out, int w, const float* kx, i
 //   out[x] = to_u8( sum_{j=0}^{k-1} ky[j] * tmp[(y + j) * w + x] )
 static void vpass_scalar(const float* tmp, uint8_t* out, int w, int y, const float* ky, int k, int x0)
 {
+    // Он берёт результаты горизонтальной фильтрации из нескольких строк и объединяет их с весами вертикального ядра.
     for (int x = x0; x < w; ++x)
     {
         float a = 0.f;
@@ -79,7 +82,7 @@ static void vpass_scalar(const float* tmp, uint8_t* out, int w, int y, const flo
 static void hpass_simd(const uint8_t* p, float* out, int w, const float* kx, int k)
 {
     int x = 0;
-    for (; x + 8 <= w; x += 8)
+    for (; x + 8 <= w; x += 8) // код обрабатывает 8 соседних пикселей по горизонтали
     {
         float32x4_t a0 = vdupq_n_f32(0.f), a1 = vdupq_n_f32(0.f);
         for (int i = 0; i < k; ++i)
@@ -129,7 +132,7 @@ GrayImage gaussian_blur(const GrayImage& src, int ksize, double sigmaX, double s
     const GrayImage padded = pad_image(src, r, border);
     GrayImage out(src.w, src.h);
 
-    if (method == GaussMethod::Naive2D)
+    if (method == GaussMethod::Naive2D) // Naive2D — обычная двумерная свёртка
     {
         // 2D-ядро — внешнее произведение 1D-ядер (Гаусс сепарабелен):
         //   G(i, j) = ky[j] * kx[i]
@@ -156,6 +159,9 @@ GrayImage gaussian_blur(const GrayImage& src, int ksize, double sigmaX, double s
         return out;
     }
 
+    // Гауссово ядро сепарабельно: двумерное ядро можно представить как произведение двух одномерных ядер
+    // Поэтому вместо одной операции с ядром k×k выполняются два прохода:
+    
     // Сепарабельный вариант: G = ky * kx^T  =>  blur = V(H(src)).
     // Стоимость 2k вместо k^2 умножений на пиксель.
     // tmp хранит результат горизонтального прохода для ВСЕХ строк padded (h + 2r строк),
@@ -175,14 +181,14 @@ GrayImage gaussian_blur(const GrayImage& src, int ksize, double sigmaX, double s
 #if defined(__ARM_NEON)
         if (simd) { hpass_simd(padded.row(yy), t, src.w, kx.data(), ksize); continue; }
 #endif
-        hpass_scalar(padded.row(yy), t, src.w, kx.data(), ksize, 0);
+        hpass_scalar(padded.row(yy), t, src.w, kx.data(), ksize, 0); // Для каждого пикселя взвешиваются соседи слева и справа.
     }
     for (int y = 0; y < src.h; ++y)
     {
 #if defined(__ARM_NEON)
         if (simd) { vpass_simd(tmp.data(), out.row(y), src.w, y, ky.data(), ksize); continue; }
 #endif
-        vpass_scalar(tmp.data(), out.row(y), src.w, y, ky.data(), ksize, 0);
+        vpass_scalar(tmp.data(), out.row(y), src.w, y, ky.data(), ksize, 0); // Взвешиваются пиксели сверху и снизу.
     }
     (void)simd;
     return out;

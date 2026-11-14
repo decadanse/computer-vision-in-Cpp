@@ -1,4 +1,4 @@
-#  ЛР3: только ноутбук `lab3_supir_mask.ipynb` на macOS (.venv, полная очистка)
+#  SUPIR: только ноутбук `MAC_supir_mask.ipynb` на macOS (.venv, полная очистка)
 
 **Принцип.** Всё живёт внутри одной папки проекта. Python-пакеты — в `.venv`, кэши и веса — в `.cache/`. Удалили папки — система чистая. C++ часть, `cmake`, `pybind11`, `pytest` здесь **не нужны**.
 
@@ -7,8 +7,8 @@
 ## 0. Структура папки
 
 ```
-lab3/                              <- корень, все команды отсюда
-├── lab3_supir_mask.ipynb
+SUPIR_research/                              <- корень, все команды отсюда
+├── MAC_supir_mask.ipynb
 ├── DIV2K_valid_HR/                <- эталоны (png/jpg), HR_DIR в ноутбуке
 ├── SUPIR/                         <- клон репозитория (только для реального запуска)
 └── models/                        <- веса SDXL и SUPIR (только для реального запуска)
@@ -88,8 +88,8 @@ import sys; print(sys.executable)   # путь должен содержать .
 Очистка удалит `results/`. Скопируйте нужное **вне** проекта:
 
 ```bash
-mkdir -p ~/Desktop/lab3_report && cp -R results ~/Desktop/lab3_report/
-pip freeze > ~/Desktop/lab3_report/requirements-lock.txt    # по желанию, пока .venv активно
+mkdir -p ~/Desktop/SUPIR_research && cp -R results ~/Desktop/SUPIR_research/
+pip freeze > ~/Desktop/SUPIR_research/requirements-lock.txt    # по желанию, пока .venv активно
 ```
 
 ---
@@ -110,7 +110,7 @@ deactivate            # выход из .venv; приглашение «(.venv)�
 **Вернуться через несколько дней:**
 
 ```bash
-cd /путь/к/lab3                           # корень проекта (там лежат .venv и env_local.sh)
+cd /путь/к/SUPIR_research                           # корень проекта (там лежат .venv и env_local.sh)
 source .venv/bin/activate && source env_local.sh
 python -c "import sys; print(sys.executable)"    # путь должен содержать .venv
 python -m jupyter lab

@@ -17,9 +17,10 @@ namespace {
 // острые края текста и шум хорошо показывают, как разные ksize и sigma сглаживают картинку.
 
 //const char* kInputPath = "/input.jpg";
+const char* kInputPath = "/Users/h4s/Dev/0_masters_degree_datasets/input.jpg";
 //const String kInputPath = "/input.jpg";
-const std::filesystem::path kInputPath =
-    std::filesystem::path(__FILE__).parent_path() / "input.jpg";
+//const std::filesystem::path kInputPath =
+//    std::filesystem::path(__FILE__).parent_path() / "input.jpg";
 
 volatile uint8_t g_sink = 0; // чтобы компилятор не выкинул вычисления в бенчмарке
 
@@ -104,10 +105,12 @@ std::vector<BenchSeries> make_series()
 // Одна точка бенчмарка: время всех 4 реализаций на изображении m с ядром k (sigma — авто).
 void bench_point(CVLabState& s, std::vector<BenchSeries>& v, double x, const cv::Mat& m, int k)
 {
+//    cv::setNumThreads(1);
     const GrayImage g = from_mat(m);
     // Наивная 2D свёртка при k > 31 занимает секунды на кадр — пропускаем, чтобы бенчмарк не висел
     if (k <= 31)
         push(s, v, 0, x, time_ms([&] { g_sink = gaussian_blur(g, k, 0, 0, GaussMethod::Naive2D).px[0]; }, 3));
+    
     push(s, v, 1, x, time_ms([&] { g_sink = gaussian_blur(g, k, 0, 0, GaussMethod::Separable).px[0]; }, 7));
     push(s, v, 2, x, time_ms([&] { g_sink = gaussian_blur(g, k, 0, 0, GaussMethod::SeparableSIMD).px[0]; }, 7));
     push(s, v, 3, x, time_ms([&] { g_sink = gaussian_blur_opencv(m, k, 0, 0).at<uint8_t>(0, 0); }, 7));

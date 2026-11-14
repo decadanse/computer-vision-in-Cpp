@@ -1,4 +1,4 @@
-# Лабораторная работа 2. Трекинг объекта на видео по ключевым точкам
+# Трекинг объекта на видео по ключевым точкам
 
 C++17, OpenCV, Dear ImGui + ImPlot, Metal (macOS, Apple Silicon). Запускается из того же приложения, что и ЛР1 (`#define USE_TRACKING_PIPELINE` в `LabSelect.h`).
 
